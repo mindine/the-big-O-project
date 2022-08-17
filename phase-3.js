@@ -80,37 +80,39 @@ function _addManyNums10Timing(increment) {
     let arr = [];
 
     for (let i = increment; i <= increment * 10; i += increment) {
-        //const start = Date.now();
-
+        // Sum of this entire increment
         let sum = 0;
-        const memoIds = [];
-        const memoVals = [];
 
-        let curMemoId = memoIds[memoIds.length - 1];
-        if (curMemoId === undefined) {
-            curMemoId = i;
+        // Keep track of calculations
+        const memo = {};
+
+        // Value we use to start the inner loop (j = key)
+        let key = memo[i];
+
+        // If first iteration, memo is empty. Use i instead
+        if (!key) {
+            key = i;
         }
 
-        for (let j = curMemoId; j <= i; j++) {
-            const res = addNums(i);  
-            console.log(curMemoId, '=', res);
-            memoIds.push(i);
+        for (let j = key; j <= i; j++) {
+            // Sum of the uncalculated values
+            const currentSum = addNums(i);
 
-            const memoVal = memoVals[memoVals.length - 1];
+            // Stored sum of the last calculation performed
+            const lastSum = memo[key - increment];
 
-            if (memoVal !== undefined) {
-                sum += res + memoVal;
+            // If first iteration, lastSum is undefined, so only add currentSum
+            if (lastSum) {
+                sum += currentSum + lastSum;
             } else {
-                sum += res;
+                sum += currentSum;
             }
 
-            memoVals.push(res);
+            // Store the latest calculation
+            memo[key] = currentSum;
         }
 
         arr.push(sum);
-
-        //const end = Date.now();
-        //console.log(end - start);
     }
 
     return arr;
